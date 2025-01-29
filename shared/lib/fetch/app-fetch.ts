@@ -1,12 +1,12 @@
 'use server'
 
-import type { IBuildPathWithQueryParamsInput } from '../utils'
-
-import { getSession, updateSession } from '@/auth'
+import { auth as getSession, update as updateSession } from '@/auth'
 import { AppEnvs } from '@/shared/config'
 import { ErrorCode, type IServerResponseBase } from '@/shared/lib/server'
-
-import { buildPathWithQueryParams } from '../utils'
+import {
+  buildPathWithQueryParams,
+  type IBuildPathWithQueryParamsInput,
+} from '@/shared/lib/utils/url'
 
 export const appFetch = async <T>({
   path,
@@ -17,7 +17,7 @@ export const appFetch = async <T>({
 }): Promise<IServerResponseBase<T>> => {
   const serverUrl = AppEnvs.SERVER_URL
   const parsedPath = parsePath(path)
-  const url = `${serverUrl}/api/v1${parsedPath}`
+  const url = serverUrl + parsedPath
 
   const response = await fetchRequest(url, init)
   return response.json()
@@ -87,9 +87,13 @@ async function handleResponse(
       return fetchRequest(url, init)
     } else {
       throw new Error(
-        res.errorCode
-          ? `Error Code: ${res.errorCode}, message: ${res.errorMessage}`
-          : 'Network response was not ok',
+        res.errorMessage ?? res.errorCode ?? 'Network response was not ok',
+        {
+          cause: {
+            errorCode: res.errorCode,
+            errorMessage: res.errorMessage,
+          },
+        },
       )
     }
   }

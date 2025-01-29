@@ -1,10 +1,9 @@
-'use server'
 import type { IServerResponseBase } from '@/shared/lib/server'
 
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 
-import { AppEnvs } from './shared/config'
+import { AppEnvs } from '@/shared/config'
 
 interface ICredentials {
   email: string
@@ -17,7 +16,7 @@ interface IAuthorizeBody {
   password: string
 }
 
-const {
+export const {
   handlers,
   signIn,
   signOut,
@@ -77,22 +76,5 @@ const {
       return session
     },
   },
+  secret: process.env.AUTH_SECRET,
 })
-
-const signInWithCredentials = async (formData: FormData) => {
-  const email = formData.get('email') || ''
-  const password = formData.get('password') || ''
-
-  return await signIn('credentials', {
-    email,
-    password,
-  })
-}
-
-export {
-  handlers,
-  auth as getSession,
-  update as updateSession,
-  signOut,
-  signInWithCredentials,
-}
