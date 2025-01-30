@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { signInWithCredentials } from '@/app/server/auth.action'
 import { showToast } from '@/shared/lib/utils/showToast'
 import { Button } from '@/shared/ui/button'
 import {
@@ -19,6 +18,7 @@ import {
 } from '@/shared/ui/form'
 import { Input } from '@/shared/ui/input'
 import { Spinner } from '@/shared/ui/spinner'
+import { signInWithCredentials } from '@/server/auth'
 
 const signInWithCredentialsSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -38,7 +38,7 @@ export default function SignInPage() {
     mutationFn: async (inputs: z.infer<typeof signInWithCredentialsSchema>) => {
       return signInWithCredentials(inputs)
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       showToast.success('Successfully signed in')
     },
     onError: (error: any) => {
