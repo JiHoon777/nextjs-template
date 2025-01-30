@@ -10,11 +10,13 @@ export const setTokenCookie = async (
   const cookieStore = await cookies()
   cookieStore.set('accessToken', accessToken, {
     httpOnly: true,
-    secure: process.env.ENV === 'production',
+    secure: AppEnvs.ENV === 'prod',
+    maxAge: 60 * 15, // 15분
   })
   cookieStore.set('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.ENV === 'production',
+    secure: AppEnvs.ENV === 'prod',
+    maxAge: 60 * 60 * 24 * 30, // 30일
   })
 }
 
