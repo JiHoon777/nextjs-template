@@ -41,7 +41,6 @@ export async function signOut(input?: { redirectUrl?: string }) {
   await appFetch('/auth/signout', {
     method: 'POST',
   })
-
   await deleteTokenCookie()
 
   if (input?.redirectUrl) {
@@ -52,5 +51,6 @@ export async function signOut(input?: { redirectUrl?: string }) {
 export async function getProfile() {
   return appFetch('/auth/profile', {
     method: 'GET',
+    cache: 'no-store',
   })
 }
