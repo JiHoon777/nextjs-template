@@ -37,24 +37,7 @@ export async function appFetch<T_RESULT>(
     })
 
     if (AppEnvs.ENV === 'local') {
-      const logger = Logger.get()
-        .groupStart('appFetch')
-        .info(`[${options.method ?? 'GET'}] ${AppEnvs.SERVER_URL}${url}`, 'URL')
-
-      const cloneJson = await res.clone().json()
-
-      if (cloneJson) {
-        logger.debug(cloneJson, 'Response')
-
-        if (cloneJson.errorCode) {
-          logger.error({
-            httpStatus: res.status,
-            errorCode: cloneJson.errorCode,
-            errorMessage: cloneJson.errorMessage,
-          })
-        }
-      }
-      logger.groupEnd()
+      logFetch(res, options, url)
     }
 
     return res
@@ -82,4 +65,25 @@ export async function appFetch<T_RESULT>(
   }
 
   return json
+}
+
+async function logFetch(res: Response, options: RequestInit = {}, url: string) {
+  const logger = Logger.get()
+    .groupStart('appFetch')
+    .info(`[${options.method ?? 'GET'}] ${AppEnvs.SERVER_URL}${url}`, 'URL')
+
+  const cloneJson = await res.clone().json()
+
+  if (cloneJson) {
+    logger.debug(cloneJson, 'Response')
+
+    if (cloneJson.errorCode) {
+      logger.error({
+        httpStatus: res.status,
+        errorCode: cloneJson.errorCode,
+        errorMessage: cloneJson.errorMessage,
+      })
+    }
+  }
+  logger.groupEnd()
 }
