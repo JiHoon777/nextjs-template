@@ -1,4 +1,4 @@
-import { type ErrorCode, errorMessages } from '@/shared/server/consts/errorCode'
+import { ErrorCode, errorMessages } from '@/shared/server/consts/errorCode'
 
 export class AppError extends Error {
   name: string
@@ -6,17 +6,16 @@ export class AppError extends Error {
   errorMessage: string
 
   constructor(
-    options: ErrorOptions & { errorCode: ErrorCode; errorMessage?: string },
+    options: ErrorOptions & { errorCode?: ErrorCode; errorMessage?: string },
   ) {
+    const errorCode = options.errorCode ?? ErrorCode.UNKNOWN
     const errorMessage =
-      options.errorMessage ??
-      errorMessages[options.errorCode] ??
-      'Unknown Error'
+      options.errorMessage ?? errorMessages[errorCode] ?? 'Unknown Error'
 
     super(errorMessage, options)
 
     this.name = this.constructor.name
-    this.errorCode = options.errorCode
+    this.errorCode = errorCode
     this.errorMessage = errorMessage
   }
 }

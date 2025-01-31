@@ -34,7 +34,13 @@ export class Logger {
     }).format(new Date())
   }
 
-  private log(level: string, message: any, color: string, tag?: string): this {
+  private log(
+    level: string,
+    message: any,
+    color: string,
+    tag?: string,
+    onlyServer?: boolean,
+  ): this {
     if (!this.show) return this
 
     const time = this.getKSTTime()
@@ -45,7 +51,9 @@ export class Logger {
       const chalkColor = this.getChalkColor(level)
       console.log(
         chalkColor(`[${time}] ${tagString} [${level.toUpperCase()}]:`),
-        util.inspect(message, { colors: true, depth: 5 }),
+        onlyServer
+          ? util.inspect(message, { colors: true, depth: 5 })
+          : message,
       )
     } else {
       // 브라우저 환경: CSS 적용
@@ -74,27 +82,27 @@ export class Logger {
     }
   }
 
-  info(message: any, tag?: string): this {
-    return this.log('info', message, '#3498db', tag) // 파란색
+  info(message: any, tag?: string, onlyServer?: boolean): this {
+    return this.log('info', message, '#3498db', tag, onlyServer) // 파란색
   }
 
-  warn(message: any, tag?: string): this {
-    return this.log('warn', message, '#f39c12', tag) // 주황색
+  warn(message: any, tag?: string, onlyServer?: boolean): this {
+    return this.log('warn', message, '#f39c12', tag, onlyServer) // 주황색
   }
 
-  error(message: any, tag?: string): this {
-    return this.log('error', message, '#e74c3c', tag) // 빨간색
+  error(message: any, tag?: string, onlyServer?: boolean): this {
+    return this.log('error', message, '#e74c3c', tag, onlyServer) // 빨간색
   }
 
-  debug(message: any, tag?: string): this {
-    return this.log('debug', message, '#2ecc71', tag) // 초록색
+  debug(message: any, tag?: string, onlyServer?: boolean): this {
+    return this.log('debug', message, '#2ecc71', tag, onlyServer) // 초록색
   }
 
   groupStart(label: string, collapsed: boolean = false): this {
     if (!this.show) return this
 
     if (this.isServer) {
-      console.log(chalk.magenta(`--- ${label} ---`))
+      console.log(chalk.magenta(`--- GROUP: ${label} ---`))
     } else {
       collapsed ? console.groupCollapsed(label) : console.group(label)
     }
@@ -106,7 +114,7 @@ export class Logger {
     if (!this.show) return this
 
     if (this.isServer) {
-      console.log(chalk.magenta(`--- END ---`))
+      console.log(chalk.magenta(`--- GROUP END ---`))
     } else {
       console.groupEnd()
     }

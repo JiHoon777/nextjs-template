@@ -1,12 +1,17 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import { Logger } from '@/shared/lib/utils/logger'
 import { getProfile, signOut } from '@/shared/server/api/auth'
 import { Button } from '@/shared/ui/button'
 
 export default function HomePage() {
+  const router = useRouter()
   const handleSignout = async () => {
     await signOut()
+
+    router.push('/signin')
   }
 
   const handleGetProfile = async () => {
@@ -16,14 +21,6 @@ export default function HomePage() {
       Logger.get().error(e)
     }
   }
-
-  Logger.get()
-    .groupStart('HomePage')
-    .debug('debug')
-    .info('info')
-    .warn('warn')
-    .error('error')
-    .groupEnd()
 
   return (
     <div>

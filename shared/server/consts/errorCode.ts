@@ -6,8 +6,8 @@ export enum ErrorCode {
   AUTH_TOKEN_EXPIRED = 'AUTH_TOKEN_EXPIRED',
   AUTH_REFRESH_TOKEN_EXPIRED = 'AUTH_REFRESH_TOKEN_EXPIRED',
 
-  // 500
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export const errorMessages: Record<ErrorCode, string> = {
@@ -19,4 +19,5 @@ export const errorMessages: Record<ErrorCode, string> = {
 
   [ErrorCode.AUTH_REFRESH_TOKEN_EXPIRED]: 'Refresh Token Expired',
   [ErrorCode.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
+  [ErrorCode.UNKNOWN]: 'Unknown Error',
 }
