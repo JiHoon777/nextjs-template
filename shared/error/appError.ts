@@ -6,11 +6,11 @@ export class AppError extends Error {
   errorMessage: string
 
   constructor(
-    options: ErrorOptions & { errorCode?: ErrorCode; errorMessage?: string },
+    options?: ErrorOptions & { errorCode?: ErrorCode; errorMessage?: string },
   ) {
-    const errorCode = options.errorCode ?? ErrorCode.UNKNOWN
+    const errorCode = options?.errorCode ?? ErrorCode.UNKNOWN
     const errorMessage =
-      options.errorMessage ?? errorMessages[errorCode] ?? 'Unknown Error'
+      options?.errorMessage ?? errorMessages[errorCode] ?? 'Unknown Error'
 
     super(errorMessage, options)
 

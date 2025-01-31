@@ -1,7 +1,16 @@
 import type { ErrorCode } from '@/shared/server/consts/errorCode'
 
-export interface IServerResponseBase<T> {
+export interface IServerSuccessResponse<T> {
+  success: true
   data: T
-  errorCode?: ErrorCode
-  errorMessage?: string
 }
+
+interface IServerErrorResponse {
+  success: false
+  errorCode: ErrorCode
+  errorMessage: string
+}
+
+export type ServerResponseBase<T = unknown> =
+  | IServerSuccessResponse<T>
+  | IServerErrorResponse

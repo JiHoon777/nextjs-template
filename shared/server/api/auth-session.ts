@@ -1,12 +1,14 @@
 'use server'
 import type { IAuthResponse } from './auth'
-import type { IServerResponseBase } from '@/shared/server/types/base'
+import type { ServerResponseBase } from '@/shared/server/types/base'
 
 import { sealData, unsealData } from 'iron-session'
 import { cookies } from 'next/headers'
 
 import { AppEnvs } from '@/shared/config/env'
 import { AppError } from '@/shared/error/appError'
+
+import { ErrorCode } from '../consts/errorCode'
 
 export interface IAuthSession extends IAuthResponse {
   createdAt: number
@@ -71,9 +73,14 @@ export async function refreshJwtTokens(refreshToken: string) {
         },
       })
 
-      const json = (await res.json()) as IServerResponseBase<IAuthResponse>
+      const json = (await res.json()) as ServerResponseBase<IAuthResponse>
 
-      if (!res.ok || json.errorCode) {
+      if (!res.ok) {
+        throw new AppError({
+          errorCode: ErrorCode.NETWORK_ERROR,
+        })
+      }
+      if (!json.success) {
         throw new AppError({
           errorCode: json.errorCode,
           errorMessage: json.errorMessage,
