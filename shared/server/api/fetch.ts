@@ -24,12 +24,13 @@ import { getAuthSession, refreshJwtTokens } from './auth-session'
 export async function appFetch<T_RESULT>(
   url: string,
   options: RequestInit = {},
+  apiVersion: number = 1,
 ): Promise<IServerSuccessResponse<T_RESULT>> {
   const fetchWithAuth = async (): Promise<Response> => {
     const authSession = await getAuthSession()
     const token = authSession?.accessToken
 
-    const res = await fetch(`${AppEnvs.SERVER_URL}${url}`, {
+    const res = await fetch(`${AppEnvs.SERVER_URL}/v${apiVersion}${url}`, {
       credentials: 'include',
       method: 'GET',
       ...options,
