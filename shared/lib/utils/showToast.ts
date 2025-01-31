@@ -1,9 +1,11 @@
 import { toast } from 'sonner'
 
+import { isPrimitive } from './isPrimitive'
+
 export const showToast = {
   error: (error: unknown) => {
-    if (typeof error === 'string') {
-      toast.error(error)
+    if (isPrimitive(error)) {
+      toast.error(error?.toString() || 'Unknown Error')
       return
     }
 
@@ -12,7 +14,11 @@ export const showToast = {
       return
     }
 
-    toast.error(JSON.stringify(error))
+    try {
+      toast.error(JSON.stringify(error))
+    } catch {
+      toast.error('Unknown Error')
+    }
   },
   info: (message: string) => {
     toast.info(message)

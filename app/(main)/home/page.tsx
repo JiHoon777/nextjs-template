@@ -1,6 +1,7 @@
 'use client'
 
-import { getProfile, signOut } from '@/server/auth'
+import { Logger } from '@/shared/lib/utils/logger'
+import { getProfile, signOut } from '@/shared/server/api/auth'
 import { Button } from '@/shared/ui/button'
 
 export default function HomePage() {
@@ -9,9 +10,20 @@ export default function HomePage() {
   }
 
   const handleGetProfile = async () => {
-    const profile = await getProfile()
-    console.log(profile)
+    try {
+      await getProfile()
+    } catch (e) {
+      Logger.get().error(e)
+    }
   }
+
+  Logger.get()
+    .groupStart('HomePage')
+    .debug('debug')
+    .info('info')
+    .warn('warn')
+    .error('error')
+    .groupEnd()
 
   return (
     <div>

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { showToast } from '@/shared/lib/utils/showToast'
+import { signUpWithCredentials } from '@/shared/server/api/auth'
 import { Button } from '@/shared/ui/button'
 import {
   Form,
@@ -17,7 +18,6 @@ import {
 } from '@/shared/ui/form'
 import { Input } from '@/shared/ui/input'
 import { Spinner } from '@/shared/ui/spinner'
-import { signUpWithCredentials } from '@/server/auth'
 
 const signupWithCredentialsSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),

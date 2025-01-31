@@ -1,9 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation'
 
+import SignupForm from '@/app/(auth)/_ui/SignupForm'
 import { Dialog, DialogContent, DialogTitle } from '@/shared/ui/dialog'
-
-import SignupForm from '../../_ui/SignupForm'
 
 export default function SignUpModal() {
   const router = useRouter()

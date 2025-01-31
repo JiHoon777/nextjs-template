@@ -1,10 +1,17 @@
-import { AppEnvs } from '@/shared/config'
-import type { IServerResponseBase } from '@/shared/lib/server'
+'use server'
+import type { IServerResponseBase } from '@/shared/server/types/base'
+
 import { cookies } from 'next/headers'
-import { refreshJwtTokens } from './jwt-token'
+
+import { AppEnvs } from '@/shared/config/env'
+import { AppError } from '@/shared/error/appError'
+import { Logger } from '@/shared/lib/utils/logger'
+import { ErrorCode, errorMessages } from '@/shared/server/consts/errorCode'
+
+import { refreshJwtTokens } from './jwtToken'
 
 /**
- * 서버에 인증된 요청을 보내는 함수입니다. (jwt 토큰이 없으면 header 에 포함하지 않음)
+ * 서버에 인증된 요청을 보내는 함수입니다. (jwt 토큰이 없으면 header에 포함하지 않음)
  * 401 Unauthorized 응답 시 토큰을 갱신하고 요청을 재시도합니다.
  *
  * @template T_RESULT - 기대하는 결과 데이터의 타입
@@ -22,7 +29,7 @@ export async function appFetch<T_RESULT>(
   const fetchWithAuth = async (
     token: string | undefined,
   ): Promise<Response> => {
-    return fetch(`${AppEnvs.SERVER_URL}${url}`, {
+    const res = await fetch(`${AppEnvs.SERVER_URL}${url}`, {
       credentials: 'include',
       method: 'GET',
       ...options,
@@ -32,6 +39,27 @@ export async function appFetch<T_RESULT>(
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     })
+
+    const logger = Logger.get()
+      .groupStart('appFetch')
+      .info(`[${options.method ?? 'GET'}] ${AppEnvs.SERVER_URL}${url}`, 'URL')
+
+    const cloneJson = await res.clone().json()
+
+    if (cloneJson) {
+      logger.debug(cloneJson, 'Response')
+
+      if (cloneJson.errorCode) {
+        logger.error({
+          httpStatus: res.status,
+          errorCode: cloneJson.errorCode,
+          errorMessage: cloneJson.errorMessage,
+        })
+      }
+    }
+    logger.groupEnd()
+
+    return res
   }
 
   let response = await fetchWithAuth(accessToken)
@@ -44,13 +72,14 @@ export async function appFetch<T_RESULT>(
     response = await fetchWithAuth(newAccessToken)
   }
 
-  const json = await response.json()
+  const json = (await response.json()) as IServerResponseBase<T_RESULT>
   if (!response.ok || json.errorCode) {
-    throw new Error(json.errorMessage ?? 'Failed to fetch data', {
-      cause: {
-        errorCode: json.errorCode,
-        errorMessage: json.errorMessage,
-      },
+    const errorCode = json.errorCode ?? ErrorCode.INTERNAL_SERVER_ERROR
+    const errorMessage = json.errorMessage ?? errorMessages[errorCode]
+
+    throw new AppError({
+      errorCode,
+      errorMessage,
     })
   }
 

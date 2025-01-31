@@ -5,7 +5,7 @@ import './globals.css'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
-import { QueryProvider } from './providers/query'
+import { QueryProvider } from './_providers/query'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

@@ -1,4 +1,4 @@
-export interface IBuildPathWithQueryParamsInput {
+export interface IBuildUrlPathInput {
   segments: (string | number)[]
   query?: Record<string, any>
 }
@@ -6,10 +6,10 @@ export interface IBuildPathWithQueryParamsInput {
 /**
  * 주어진 경로 배열과 쿼리 파라미터를 조합하여 완전한 Path 경로를 생성합니다.
  */
-export function buildPathWithQueryParams({
+export function buildUrlPath({
   segments,
   query = {},
-}: IBuildPathWithQueryParamsInput): string {
+}: IBuildUrlPathInput): string {
   const path = segments.join('/')
   return `/${path}${makeQueryParams(query)}`
 }

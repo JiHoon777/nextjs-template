@@ -1,7 +1,10 @@
-import { AppEnvs } from '@/shared/config'
-import type { IServerResponseBase } from '@/shared/lib/server'
+'use server'
+import type { ISigninResponse } from './auth'
+import type { IServerResponseBase } from '@/shared/server/types/base'
+
 import { cookies } from 'next/headers'
-import { ISigninResponse } from './auth'
+
+import { AppEnvs } from '@/shared/config/env'
 
 export const setTokenCookie = async (
   accessToken: string,
